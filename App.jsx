@@ -12,7 +12,7 @@ function App() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Text>Hello welcome to Yellow book</Text>
+      <Text>Hello welcome to Yellow book test apk</Text>
     </View>
   );
 }
