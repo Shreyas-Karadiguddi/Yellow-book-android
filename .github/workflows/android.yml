@@ -1,0 +1,46 @@
+name: Android CI/CD pipelines
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java version
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Node version
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: yarn install
+      
+      - name: Syntax check
+        run: yarn lint
+
+      - name: Build & Release APK
+        run: |
+          cd android
+          .\gradlew.bat assembleRelease
+      
+      - name: Rename APK
+        run: Rename-Item -Path android/app/build/outputs/apk/release/app-release.apk -NewName ("app-release.$env:GITHUB_RUN_NUMBER.apk")
+        shell: pwsh
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ github.run_number }}.apk
+          path: android/app/build/outputs/apk/release/app-release.${{ github.run_number }}.apk
