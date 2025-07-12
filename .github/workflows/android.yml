@@ -1,4 +1,4 @@
-name: Build Android APK on Commit
+name: Android CI/CD pipelines
 
 on:
   push:
@@ -13,13 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Java
+      - name: Set up Java version
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Node
+      - name: Set up Node version
         uses: actions/setup-node@v3
         with:
           node-version: '20'
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Build Debug APK
+      - name: Build & Release APK
         run: |
           cd android
           .\gradlew.bat assembleRelease
@@ -35,5 +35,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug.apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          name: app-${{ github.run_number }}.apk
+          path: android/app/build/outputs/apk/release/app-release.${{ github.run_number }}.apk
