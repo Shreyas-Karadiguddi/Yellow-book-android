@@ -1,19 +1,26 @@
 import {
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
+import { Provider } from 'react-redux';
+import { PaperProvider } from 'react-native-paper'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { store } from './redux/store';
+
+const queryClient = new QueryClient()
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Text>Hello welcome to Yellow book test apk</Text>
-    </View>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <PaperProvider>
+          <View style={styles.container}>
+            <Text>Hello welcome to Yellow book test apk</Text>
+          </View>
+        </PaperProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
