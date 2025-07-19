@@ -9,9 +9,10 @@ import {
   Platform,
   ScrollView,
   Dimensions,
-  Alert,
+  ToastAndroid,
 } from 'react-native';
 import { TextInput, Button, Text, Card } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import * as authActions from '../../actions/auth_api';
 
 const { width, height } = Dimensions.get('window');
@@ -23,6 +24,7 @@ const INITIAL_USER_CREDENTIALS = {
 
 const LoginScreen = () => {
   const userCredentials = useRef(INITIAL_USER_CREDENTIALS);
+  const navigation = useNavigation();
 
   const {
     mutate: loginUser,
@@ -32,14 +34,19 @@ const LoginScreen = () => {
   } = authActions.useLoginUser();
 
   useEffect(() => {
-    if (loginStatus === 'success') {
+    if (loginStatus === 'success' && loginData?.message && loginData?.token) {
       axios.defaults.headers.common[
         'Authorization'
       ] = `Bearer ${loginData.token}`;
-
-      console.log('Login successful:', loginData);
+      navigation.navigate('AdminDash');
+      ToastAndroid.show(loginData.message, ToastAndroid.SHORT);
+    } else if (loginStatus === 'error' && loginData?.message) {
+      navigation.navigate('AdminDash');
+      ToastAndroid.show(loginData.message, ToastAndroid.LONG);
     } else if (loginStatus === 'error') {
-      console.log('Login failed:', loginData);
+      navigation.navigate('AdminDash');
+      ToastAndroid.show('Login failed. Please try again.', ToastAndroid.LONG);
+      // just for development the login authentication is bypassed
     }
   }, [loginStatus, loginData, isLoginLoading]);
 
