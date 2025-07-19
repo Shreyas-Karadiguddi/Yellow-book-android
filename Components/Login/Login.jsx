@@ -1,53 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
-  Image,
-  TouchableOpacity,
+  Dimensions,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  Dimensions,
-  Alert,
+  Image,
 } from 'react-native';
-import { TextInput, Button, Text, Card } from 'react-native-paper';
-import * as authActions from '../../actions/auth_api';
+import { TextInput, Button, Text } from 'react-native-paper';
 
-const { width, height } = Dimensions.get('window');
-
-const INITIAL_USER_CREDENTIALS = {
-  userName: '',
-  password: '',
-};
+const { width } = Dimensions.get('window');
 
 const LoginScreen = () => {
-  const userCredentials = useRef(INITIAL_USER_CREDENTIALS);
-
-  const {
-    mutate: loginUser,
-    status: loginStatus,
-    data: loginData,
-    isLoading: isLoginLoading,
-  } = authActions.useLoginUser();
-
-  useEffect(() => {
-    if (loginStatus === 'success') {
-      axios.defaults.headers.common[
-        'Authorization'
-      ] = `Bearer ${loginData.token}`;
-
-      console.log('Login successful:', loginData);
-    } else if (loginStatus === 'error') {
-      console.log('Login failed:', loginData);
-    }
-  }, [loginStatus, loginData, isLoginLoading]);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    loginUser({
-      userName: userCredentials.current.userName,
-      password: userCredentials.current.password,
-    });
+    console.log('Email:', email);
+    console.log('Password:', password);
   };
 
   return (
@@ -55,55 +25,57 @@ const LoginScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.header}>
-          <View style={styles.iconWrapper}>
+      <View style={styles.innerContainer}>
+        <View style={styles.logoWrapper}>
+          <View style={styles.logoCircle}>
             <Image
               source={require('../../assets/icons/yellow-book-app-icon.png')}
-              style={styles.icon}
+              style={styles.logo}
               resizeMode="contain"
             />
           </View>
         </View>
 
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text style={styles.loginTitle}>LOGIN</Text>
+        <Text style={styles.title}>Login</Text>
+        <Text style={styles.subtitle}>Get access to your account and more</Text>
 
-            <TextInput
-              label="Username"
-              defaultValue={userCredentials.current.userName}
-              onChangeText={text => (userCredentials.current.userName = text)}
-              mode="flat"
-              style={styles.input}
-              autoCapitalize="none"
-            />
+        <TextInput
+          label="User name"
+          value={email}
+          onChangeText={setEmail}
+          mode="outlined"
+          style={styles.input}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          theme={{ roundness: 10 }}
+        />
 
-            <TextInput
-              label="Password"
-              defaultValue={userCredentials.current.password}
-              onChangeText={text => (userCredentials.current.password = text)}
-              mode="flat"
-              style={styles.input}
-              secureTextEntry
-            />
+        <TextInput
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+          mode="outlined"
+          style={styles.input}
+          secureTextEntry
+          theme={{ roundness: 10 }}
+        />
 
-            <Button
-              mode="contained"
-              onPress={handleLogin}
-              style={styles.button}
-              loading={isLoginLoading}
-              disabled={isLoginLoading}
-            >
-              LOGIN
-            </Button>
+        <Button
+          mode="contained"
+          onPress={handleLogin}
+          style={styles.signInButton}
+          contentStyle={{ paddingVertical: 8 }}
+          labelStyle={{ fontSize: 16, fontWeight: '600' }}
+          textColor='white'
+        >
+          Login
+        </Button>
 
-            <TouchableOpacity>
-              <Text style={styles.forgotText}>FORGOT PASSWORD?</Text>
-            </TouchableOpacity>
-          </Card.Content>
-        </Card>
-      </ScrollView>
+        <Text style={styles.footerText}>
+          Don’t have an account?{' '}
+          <Text style={styles.signUpText}>Sign up</Text>
+        </Text>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -113,55 +85,58 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2962FF',
-  },
-  scrollView: {
-    flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 20,
+    backgroundColor: '#e8ecf4'
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: -30,
-  },
-  iconWrapper: {
-    backgroundColor: 'white',
-    padding: width * 0.05,
-    borderRadius: 100,
-    marginBottom: 50,
-  },
-  icon: {
-    width: width * 0.1,
-    height: width * 0.1,
-    tintColor: '#2962FF',
-  },
-  card: {
+  innerContainer: {
     width: width * 0.85,
-    borderRadius: 16,
-    elevation: 6,
-    paddingVertical: height * 0.02,
+    alignSelf: 'center',
   },
-  loginTitle: {
+  logoWrapper: {
+    alignItems: 'center',
+    marginBottom: 25,
+  },
+  logoCircle: {
+    backgroundColor: '#EAF1FF',
+    padding: 20,
+    borderRadius: 100,
+    elevation: 2,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+  },
+  title: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#2962FF',
+    marginBottom: 6,
+    color: '#111827',
+  },
+  subtitle: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 22,
   },
   input: {
-    marginBottom: 12,
-    backgroundColor: 'transparent',
+    marginBottom: 14,
+    backgroundColor: '#fff',
+    elevation: 1,
   },
-  button: {
-    marginTop: 8,
-    borderRadius: 30,
-    paddingVertical: 6,
+  signInButton: {
+    marginTop: 10,
     backgroundColor: '#2962FF',
+    borderRadius: 10,
+    color: 'white'
   },
-  forgotText: {
-    marginTop: 12,
+  footerText: {
     textAlign: 'center',
+    marginTop: 20,
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  signUpText: {
     color: '#2962FF',
     fontWeight: '600',
   },

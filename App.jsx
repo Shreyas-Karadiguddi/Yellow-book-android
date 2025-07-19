@@ -3,7 +3,8 @@ import { Provider } from 'react-redux';
 import { PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { store } from './redux/store';
-import LoginScreen from './Components/Login/Login';
+import LoginScreen from './components/Login/Login';
+import Users from './components/Users/Users';
 
 const queryClient = new QueryClient();
 
@@ -13,6 +14,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <PaperProvider>
           <LoginScreen />
+          {/* <Users /> */}
         </PaperProvider>
       </QueryClientProvider>
     </Provider>
