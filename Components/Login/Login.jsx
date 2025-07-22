@@ -11,9 +11,10 @@ import {
   Dimensions,
   ToastAndroid,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { TextInput, Button, Text, Card } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
 import * as authActions from '../../actions/auth_api';
+import * as Utils from '../../Utils/Auth';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,7 +25,7 @@ const INITIAL_USER_CREDENTIALS = {
 
 const LoginScreen = () => {
   const userCredentials = useRef(INITIAL_USER_CREDENTIALS);
-  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const {
     mutate: loginUser,
@@ -34,25 +35,29 @@ const LoginScreen = () => {
   } = authActions.useLoginUser();
 
   useEffect(() => {
-    if (loginStatus === 'success' && loginData?.message && loginData?.token) {
-      axios.defaults.headers.common[
-        'Authorization'
-      ] = `Bearer ${loginData.token}`;
-      navigation.navigate('AdminDash');
-      ToastAndroid.show(loginData.message, ToastAndroid.SHORT);
+    if (loginStatus === 'success') {
+      handleLoginSuccess();
     } else if (loginStatus === 'error' && loginData?.message) {
-      navigation.navigate('AdminDash');
       ToastAndroid.show(loginData.message, ToastAndroid.LONG);
     } else if (loginStatus === 'error') {
-      navigation.navigate('AdminDash');
       ToastAndroid.show('Login failed. Please try again.', ToastAndroid.LONG);
-      // just for development the login authentication is bypassed
     }
   }, [loginStatus, loginData, isLoginLoading]);
 
+  const handleLoginSuccess = () => {
+    axios.defaults.headers.common[
+      'Authorization'
+    ] = `Bearer ${loginData.token}`;
+    ToastAndroid.show(loginData.message, ToastAndroid.SHORT);
+    Utils.setToken(loginData.token);
+    const decodedToken = Utils.decodeToken(loginData.token);
+    dispatch({ type: 'SET_ROLE', payload: decodedToken.role });
+    dispatch({ type: 'TOKEN', payload: loginData.token });
+  };
+
   const handleLogin = () => {
     loginUser({
-      userName: userCredentials.current.userName,
+      userName: userCredentials.current.userName.trim(),
       password: userCredentials.current.password,
     });
   };
