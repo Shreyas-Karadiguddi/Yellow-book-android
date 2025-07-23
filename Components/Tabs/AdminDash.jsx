@@ -1,38 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
-  ScrollView,
-  useColorScheme,
   SafeAreaView,
   StatusBar,
+  UIManager,
+  Platform,
+  useColorScheme,
+  Animated,
+  Easing,
 } from 'react-native';
+import { Button, Card, Text, useTheme } from 'react-native-paper';
 import { FlashList } from '@shopify/flash-list';
+import Icon from '@react-native-vector-icons/material-design-icons';
 import * as userActions from '../../actions/users_api';
+
+if (Platform.OS === 'android') {
+  UIManager.setLayoutAnimationEnabledExperimental &&
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function AdminDash() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const { data: users, isLoading } = userActions.getAllUsers();
+  const theme = useTheme();
 
-  const theme = {
-    background: isDark ? '#121212' : '#F5F5F5',
-    text: isDark ? '#FFFFFF' : '#000000',
-    card: isDark ? '#1E1E1E' : '#FFFFFF',
-    border: isDark ? '#444' : '#DDD',
-    accent: '#4F46E5',
-  };
+  const [expandedId, setExpandedId] = useState(null);
+  const { data: users, isLoading } = userActions.getAllUsers();
 
   useEffect(() => {
     if (users) {
       console.log('Fetched users:', users);
     }
-  }, [users]);
+    console.log('Expanded ID:', expandedId);
+  }, [users, expandedId]);
 
   return (
     <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: theme.background }]}
+      style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
     >
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
@@ -65,84 +70,90 @@ export default function AdminDash() {
         </View>
       </View>
 
-      {/* Scrollable List */}
       <FlashList
         data={users}
-        estimatedItemSize={40}
-        contentContainerStyle={[
-          styles.listContent,
-          { borderColor: theme.border },
-        ]}
+        estimatedItemSize={80}
+        extraData={expandedId}
+        overrideItemLayout={() => null}
+        contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
-          <View
-            style={{
-              backgroundColor: '#322F2F2',
-              padding: 10,
-              marginLeft: 10,
-              marginRight: 10,
-              borderRadius: 5,
-            }}
-          >
-            <Text style={[styles.employeeText, { color: theme.text }]}>
-              {item.user_name}
-            </Text>
-          </View>
+          <ExpandableCard
+            item={item}
+            isExpanded={expandedId === item.id}
+            onToggle={() =>
+              setExpandedId(prev => (prev === item.id ? null : item.id))
+            }
+            theme={theme}
+          />
         )}
       />
     </SafeAreaView>
   );
 }
 
+// ✅ ExpandableCard with Animated Expansion
+const ExpandableCard = ({ item, isExpanded, onToggle, theme }) => {
+  const animatedHeight = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedHeight, {
+      toValue: isExpanded ? 80 : 0, // height in px
+      duration: 250,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).start();
+  }, [isExpanded]);
+
+  return (
+    <Card
+      key={`${item.id}-${isExpanded}`}
+      style={[
+        styles.userCard,
+        { backgroundColor: theme.dark ? '#1e1e1e' : '#F9FAFB' },
+      ]}
+      onPress={onToggle}
+    >
+      <View style={styles.userRow}>
+        <View style={styles.iconWrapper}>
+          <Icon name="account-circle" size={24} color="#2962FF" />
+        </View>
+        <Text style={[styles.userName, { color: theme.colors.primary }]}>
+          {item.user_name}
+        </Text>
+        <Icon
+          name={isExpanded ? 'chevron-up' : 'chevron-down'}
+          size={24}
+          color={theme.colors.primary}
+        />
+      </View>
+
+      <Animated.View style={{ height: animatedHeight, overflow: 'hidden' }}>
+        <View style={styles.buttonRow}>
+          <Button
+            mode="contained"
+            icon="reload"
+            style={styles.actionButton}
+            textColor="#000"
+          >
+            Reset Password
+          </Button>
+          <Button
+            mode="contained"
+            icon="account-edit"
+            style={styles.actionButton}
+            textColor="#000"
+          >
+            Update User
+          </Button>
+        </View>
+      </Animated.View>
+    </Card>
+  );
+};
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-  },
-  headerContainer: {
-    padding: 16,
-    backgroundColor: 'transparent', // Keep background matching safe area
-    borderBottomWidth: 1,
-  },
-  statBox: {
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    marginBottom: 10,
-  },
-  statLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 4,
-  },
-  listContent: {
-    padding: 16,
-    borderTopWidth: 1,
-  },
-  employeeText: {
-    fontSize: 16,
-    paddingVertical: 8,
-  },
-  safeArea: {
-    flex: 1,
-    // marginTop: StatusBar.currentHeight || 0,
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  center: {
-    paddingTop: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  header: {
-    fontWeight: 'bold',
-    fontSize: 22,
-    marginBottom: 14,
-    textAlign: 'center',
+    // marginTop: StatusBar.currentHeight,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -169,38 +180,46 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  employeeContainer: {
-    // borderWidth: 1,
-    // borderRadius: 10,
-    padding: 12,
+  listContent: {
+    padding: 16,
   },
-  employeeBox: {
-    padding: 14,
-    marginVertical: 6,
-    // borderWidth: 1,
-    // borderRadius: 10,
+  userCard: {
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
+    borderRadius: 12,
+    marginBottom: 12,
+    elevation: 2,
+    padding: 16,
+    minHeight: 80,
   },
-  employeeText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  employeeData: {
-    marginTop: 4,
-    fontSize: 13,
-  },
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 70,
+  userRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
-    borderTopWidth: 1,
   },
-  tabItem: {
-    alignItems: 'center',
+  iconWrapper: {
+    width: 35,
+    height: 35,
+    borderRadius: 25,
+    backgroundColor: '#EAF1FF',
     justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+    gap: 10,
+  },
+  actionButton: {
+    flex: 1,
+    borderRadius: 20,
+    backgroundColor: '#C4B5FD',
   },
 });

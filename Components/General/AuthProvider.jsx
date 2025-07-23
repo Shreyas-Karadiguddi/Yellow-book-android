@@ -1,16 +1,46 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { useColorScheme } from 'react-native';
+import {
+  NavigationContainer,
+  DefaultTheme as NavigationDefaultTheme,
+  DarkTheme as NavigationDarkTheme,
+} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  Provider as PaperProvider,
+  DefaultTheme as PaperDefaultTheme,
+  MD3DarkTheme as PaperDarkTheme,
+} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useSelector } from 'react-redux';
 
 import Users from '../Tabs/Users';
 import AdminDash from '../Tabs/AdminDash';
 import Settings from '../Tabs/Settings';
 import Customers from '../Tabs/Customers';
 import LoginScreen from '../Login/Login';
-import { useSelector } from 'react-redux';
 
 const Tabs = createBottomTabNavigator();
+
+// Combine Navigation and Paper themes
+const CombinedDefaultTheme = {
+  ...NavigationDefaultTheme,
+  ...PaperDefaultTheme,
+  colors: {
+    ...NavigationDefaultTheme.colors,
+    ...PaperDefaultTheme.colors,
+  },
+};
+
+const CombinedDarkTheme = {
+  ...NavigationDarkTheme,
+  ...PaperDarkTheme,
+  colors: {
+    ...NavigationDarkTheme.colors,
+    ...PaperDarkTheme.colors,
+    background: '#121212', // Optional override
+  },
+};
 
 const protectRoutes = role => {
   switch (role) {
@@ -43,6 +73,7 @@ const protectRoutes = role => {
             },
             tabBarActiveTintColor: '#007aff',
             tabBarInactiveTintColor: 'gray',
+            // headerShown: false,
           })}
         >
           <Tabs.Screen name="Admin Dashboard" component={AdminDash} />
@@ -55,9 +86,21 @@ const protectRoutes = role => {
 };
 
 export const AuthProvider = () => {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { token, role } = useSelector(state => state.reducer);
+
+  const theme = isDark ? CombinedDarkTheme : CombinedDefaultTheme;
+
   if (!token) {
     return <LoginScreen />;
   }
-  return <NavigationContainer>{protectRoutes(role)}</NavigationContainer>;
+
+  return (
+    <PaperProvider theme={theme}>
+      <NavigationContainer theme={theme}>
+        {protectRoutes(role)}
+      </NavigationContainer>
+    </PaperProvider>
+  );
 };
