@@ -56,10 +56,10 @@ const protectRoutes = role => {
                 case 'Admin Dashboard':
                   iconName = 'home';
                   break;
-                case 'Users':
+                case 'User master':
                   iconName = 'group';
                   break;
-                case 'Customers':
+                case 'Customer master':
                   iconName = 'people';
                   break;
                 case 'Settings':
@@ -71,14 +71,14 @@ const protectRoutes = role => {
 
               return <Icon name={iconName} size={size} color={color} />;
             },
-            tabBarActiveTintColor: '#007aff',
+            tabBarActiveTintColor: '#C4B5FD',
             tabBarInactiveTintColor: 'gray',
             // headerShown: false,
           })}
         >
           <Tabs.Screen name="Admin Dashboard" component={AdminDash} />
-          <Tabs.Screen name="Users" component={Users} />
-          <Tabs.Screen name="Customers" component={Customers} />
+          <Tabs.Screen name="User master" component={Users} />
+          <Tabs.Screen name="Customer master" component={Customers} />
           <Tabs.Screen name="Settings" component={Settings} />
         </Tabs.Navigator>
       );
