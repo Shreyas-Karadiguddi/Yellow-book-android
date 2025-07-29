@@ -26,7 +26,7 @@ export default function AdminDash() {
   const theme = useTheme();
 
   const [expandedId, setExpandedId] = useState(null);
-  const { data: users, isLoading } = userActions.getAllUsers();
+  const { data: users, isLoading } = userActions.useGetAllUsers();
 
   useEffect(() => {
     if (users) {
