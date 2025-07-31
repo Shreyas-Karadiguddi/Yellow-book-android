@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { store } from './redux/store';
-import { AuthProvider } from './Components/General/AuthProvider';
+import { AuthProvider } from './components/General/AuthProvider';
 
 const queryClient = new QueryClient();
 

@@ -10,3 +10,11 @@ export const useGetAllUsers = () => {
     refetchOnWindowFocus: false,
   });
 };
+
+export const useCreateUser = () => {
+  return useMutation({
+    mutationKey: ['CreateUser'],
+    mutationFn: newUser =>
+      axios.post(`${API_URL}/users/createuser`, newUser).then(res => res.data),
+  });
+};
