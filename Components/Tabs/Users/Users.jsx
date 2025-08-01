@@ -13,6 +13,7 @@ import * as userActions from '../../../actions/users_api';
 import UserHeaders from './UserHeaders';
 import UserList from './UserList';
 import UserModals from './modals/UserModals';
+import { useNotification } from '../../General/Notification';
 
 if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental &&
@@ -20,10 +21,16 @@ if (Platform.OS === 'android') {
 }
 
 const CREATE_USER = {
+  id: null,
   userName: '',
   password: '',
   role: '',
   contact: '',
+};
+
+const RESET_PASSWORD = {
+  oldPassword: '',
+  newPassword: '',
 };
 
 const Users = () => {
@@ -33,12 +40,19 @@ const Users = () => {
   const [modalAction, setModalAction] = useState('');
 
   const createUserRef = useRef(CREATE_USER);
+  const resetPasswordRef = useRef(RESET_PASSWORD);
 
   const { data: isUserData, refetch: refetchUsers } =
     userActions.useGetAllUsers();
 
   const { status: isUserCreated, mutate: createUser } =
     userActions.useCreateUser();
+
+  const { status: isUserResetPassword, mutate: resetPassword } =
+    userActions.resetPasswordByAdmin();
+
+  const { status: isUpdateUser, mutate: updateUser } =
+    userActions.useUpdateUser();
 
   useFocusEffect(
     useCallback(() => {
@@ -49,11 +63,45 @@ const Users = () => {
 
   useEffect(() => {
     if (isUserCreated === 'success') {
-      console.log('okkk');
+      refetchUsers();
+      setIsOpenModal(false);
+      setModalAction('');
+      useNotification('success', 'CREATE USER', 'User created successfully');
     } else if (isUserCreated === 'error') {
       console.log('error');
     }
   }, [isUserCreated]);
+
+  useEffect(() => {
+    if (isUpdateUser === 'success') {
+      refetchUsers();
+      setIsOpenModal(false);
+      setModalAction('');
+      useNotification('success', 'UPDATE USERS', 'User updated successfully');
+    } else if (isUpdateUser === 'error') {
+      console.log('error');
+    }
+  }, [isUpdateUser]);
+
+  useEffect(() => {
+    if (isUserResetPassword === 'success') {
+      setIsOpenModal(false);
+      setModalAction('');
+      useNotification(
+        'success',
+        'RESET PASSWORD',
+        'Password reset successfully',
+      );
+    } else if (isUserResetPassword === 'error') {
+      console.log('error');
+    }
+  }, [isUserResetPassword]);
+
+  useEffect(() => {
+    if (modalAction === 'update') {
+      console.log(createUserRef.current);
+    }
+  }, [modalAction]);
 
   const handleActions = useCallback(() => {
     switch (modalAction) {
@@ -65,6 +113,23 @@ const Users = () => {
           contact: createUserRef.current.contact,
         };
         createUser(newUser);
+        break;
+      case 'update':
+        const updateUserDetails = {
+          id: createUserRef.current.id,
+          userName: createUserRef.current.userName,
+          role: createUserRef.current.role,
+          contact: createUserRef.current.contact,
+        };
+        updateUser(updateUserDetails);
+        break;
+      case 'resetpassword':
+        const reset = {
+          id: resetPasswordRef.current.id,
+          oldPassword: resetPasswordRef.current.oldPassword,
+          newPassword: resetPasswordRef.current.newPassword,
+        };
+        resetPassword(reset);
         break;
       default:
         break;
@@ -96,6 +161,10 @@ const Users = () => {
                 toggleExpand={toggleExpand}
                 expandedId={expandedId}
                 theme={theme}
+                createUserRef={createUserRef.current}
+                setModalAction={setModalAction}
+                setIsOpenModal={setIsOpenModal}
+                resetPasswordRef={resetPasswordRef.current}
               />
             );
           }}
@@ -108,6 +177,7 @@ const Users = () => {
         setIsOpenModal={setIsOpenModal}
         createUserRef={createUserRef.current}
         handleActions={handleActions}
+        resetPasswordRef={resetPasswordRef.current}
       />
     </>
   );

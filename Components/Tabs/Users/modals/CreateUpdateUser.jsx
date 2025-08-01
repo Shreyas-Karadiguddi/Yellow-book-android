@@ -3,7 +3,8 @@ import { View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { Col, Row } from 'react-native-easy-grid';
 
-const CreateUpdateUser = ({ createUserRef }) => {
+const CreateUpdateUser = ({ createUserRef, modalAction }) => {
+  console.log(createUserRef);
   return (
     <View style={{ flex: 1 }}>
       <Row>

@@ -18,3 +18,23 @@ export const useCreateUser = () => {
       axios.post(`${API_URL}/users/createuser`, newUser).then(res => res.data),
   });
 };
+
+export const useUpdateUser = () => {
+  return useMutation({
+    mutationKey: ['UpdateUser'],
+    mutationFn: updateUser =>
+      axios
+        .post(`${API_URL}/users/updateuser`, updateUser)
+        .then(res => res.data),
+  });
+};
+
+export const resetPasswordByAdmin = () => {
+  return useMutation({
+    mutationKey: ['ResetPasswordByAdmin'],
+    mutationFn: resetPassword =>
+      axios
+        .post(`${API_URL}/users/resetpassword/admin`, resetPassword)
+        .then(res => res.data),
+  });
+};

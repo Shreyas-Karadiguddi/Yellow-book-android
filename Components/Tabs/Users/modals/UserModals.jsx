@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 import BaseModal from '../../../General/BaseModal';
 import CreateUpdateUser from './CreateUpdateUser';
+import ResetPassword from './ResetPassword';
 
 const modalParams = {
   create: {
@@ -15,9 +16,9 @@ const modalParams = {
   },
   update: {
     title: 'UPDATE USER',
-    footerButton1: 'UPDATE',
+    footerButton1: 'SAVE',
     footerButton2: 'CANCEL',
-    footerButtonIcon1: 'check',
+    footerButtonIcon1: 'content-save',
     footerButtonIcon2: 'close',
     contentHeight: 280,
   },
@@ -31,11 +32,13 @@ const modalParams = {
   },
 };
 
-const modalContent = (modalAction, createUserRef) => {
+const modalContent = (modalAction, createUserRef, resetPasswordRef) => {
   switch (modalAction) {
     case 'create':
     case 'update':
       return <CreateUpdateUser createUserRef={createUserRef} />;
+    case 'resetpassword':
+      return <ResetPassword resetPasswordRef={resetPasswordRef} />;
     default:
       return;
   }
@@ -68,13 +71,14 @@ const UserModals = ({
   setIsOpenModal,
   createUserRef,
   handleActions,
+  resetPasswordRef,
 }) => {
   const handleCancel = () => {
     setIsOpenModal(false);
   };
 
   const cotent = useCallback(() => {
-    return modalContent(modalAction, createUserRef);
+    return modalContent(modalAction, createUserRef, resetPasswordRef);
   }, [modalAction]);
 
   const footer = useCallback(() => {

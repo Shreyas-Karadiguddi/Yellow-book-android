@@ -1,10 +1,18 @@
 import React, { memo } from 'react';
-import { Card, Text, Button, useTheme } from 'react-native-paper';
+import { Card, Text, Button } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import Icon from '@react-native-vector-icons/material-design-icons';
 
-const UserList = ({ item, toggleExpand, expandedId, theme }) => {
-  //  const theme = useTheme();
+const UserList = ({
+  item,
+  toggleExpand,
+  expandedId,
+  theme,
+  createUserRef,
+  setModalAction,
+  setIsOpenModal,
+  resetPasswordRef,
+}) => {
   const isExpanded = expandedId === item.id;
 
   return (
@@ -36,7 +44,11 @@ const UserList = ({ item, toggleExpand, expandedId, theme }) => {
             icon="reload"
             style={styles.actionButton}
             textColor="#000"
-            onPress={() => console.log('Reset Password clicked')}
+            onPress={() => {
+              resetPasswordRef.id = item.id;
+              setModalAction('resetpassword');
+              setIsOpenModal(true);
+            }}
           >
             Reset Password
           </Button>
@@ -45,7 +57,20 @@ const UserList = ({ item, toggleExpand, expandedId, theme }) => {
             icon="account-edit"
             style={styles.actionButton}
             textColor="#000"
-            onPress={() => console.log('Update User clicked')}
+            onPress={() => {
+              createUserRef.id = item.id;
+              createUserRef.userName = item.user_name;
+              // createUserRef.role = item.role;
+              createUserRef.contact = item.contact_info;
+              // console.log(
+              //   'OKKKKKKKKKK',
+              //   item.id,
+              //   item.user_name,
+              //   createUserRef,
+              // );
+              setModalAction('update');
+              setIsOpenModal(true);
+            }}
           >
             Update User
           </Button>
