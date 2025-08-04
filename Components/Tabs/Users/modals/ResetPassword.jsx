@@ -9,9 +9,10 @@ const ResetPassword = ({ resetPasswordRef }) => {
       <Row>
         <Col>
           <TextInput
-            label="Old Password"
-            defaultValue={resetPasswordRef.oldPassword}
-            onChangeText={text => (resetPasswordRef.userName = text)}
+            label="New Password"
+            mode="outlined"
+            defaultValue={resetPasswordRef.newPassword}
+            onChangeText={text => (resetPasswordRef.newPassword = text)}
             style={{ height: 50 }}
             autoFocus
           />
@@ -20,9 +21,10 @@ const ResetPassword = ({ resetPasswordRef }) => {
       <Row>
         <Col>
           <TextInput
-            label="New Password"
-            defaultValue={resetPasswordRef.password}
-            onChangeText={text => (resetPasswordRef.newPassword = text)}
+            label="Confirm Password"
+            mode="outlined"
+            defaultValue={resetPasswordRef.confirmPassword}
+            onChangeText={text => (resetPasswordRef.confirmPassword = text)}
             style={{ height: 50 }}
             secureTextEntry
             right={<TextInput.Icon icon="eye" size={20} />}

@@ -9,11 +9,13 @@ import {
 import { FlashList } from '@shopify/flash-list';
 import { useFocusEffect } from '@react-navigation/native';
 import { Divider, useTheme } from 'react-native-paper';
+import { ALERT_TYPE } from 'react-native-alert-notification';
 import * as userActions from '../../../actions/users_api';
 import UserHeaders from './UserHeaders';
 import UserList from './UserList';
-import UserModals from './modals/UserModals';
-import { useNotification } from '../../General/Notification';
+import UserModals from './UserModals';
+import { useToastDialog } from '../../General/Notification';
+import { Loader } from '../../General/Loader';
 
 if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental &&
@@ -21,16 +23,23 @@ if (Platform.OS === 'android') {
 }
 
 const CREATE_USER = {
-  id: null,
   userName: '',
   password: '',
   role: '',
   contact: '',
 };
 
+const UPDATE_USER = {
+  id: null,
+  userName: '',
+  role: '',
+  contact: '',
+};
+
 const RESET_PASSWORD = {
-  oldPassword: '',
+  id: null,
   newPassword: '',
+  confirmPassword: '',
 };
 
 const Users = () => {
@@ -38,21 +47,34 @@ const Users = () => {
   const [expandedId, setExpandedId] = useState(null);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalAction, setModalAction] = useState('');
+  const [filter, setFilter] = useState('');
+  const [userList, setUserList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const createUserRef = useRef(CREATE_USER);
+  const updateUserRef = useRef(UPDATE_USER);
   const resetPasswordRef = useRef(RESET_PASSWORD);
 
-  const { data: isUserData, refetch: refetchUsers } =
-    userActions.useGetAllUsers();
+  const {
+    data: isUserData,
+    refetch: refetchUsers,
+    isFetching: isFetchingUsers,
+  } = userActions.useGetAllUsers();
 
-  const { status: isUserCreated, mutate: createUser } =
-    userActions.useCreateUser();
+  const {
+    status: isUserCreated,
+    mutate: createUser,
+    error: isCreateUserError,
+  } = userActions.useCreateUser();
 
   const { status: isUserResetPassword, mutate: resetPassword } =
     userActions.resetPasswordByAdmin();
 
-  const { status: isUpdateUser, mutate: updateUser } =
-    userActions.useUpdateUser();
+  const {
+    status: isUpdateUser,
+    mutate: updateUser,
+    error: isUpdateUserError,
+  } = userActions.useUpdateUser();
 
   useFocusEffect(
     useCallback(() => {
@@ -62,13 +84,33 @@ const Users = () => {
   );
 
   useEffect(() => {
+    if (isUserData) {
+      setUserList(isUserData);
+    }
+  }, [isUserData]);
+
+  useEffect(() => {
     if (isUserCreated === 'success') {
       refetchUsers();
       setIsOpenModal(false);
-      setModalAction('');
-      useNotification('success', 'CREATE USER', 'User created successfully');
+      setIsLoading(false);
+      useToastDialog(
+        ALERT_TYPE.SUCCESS,
+        'CREATE USER',
+        'User created successfully',
+      );
     } else if (isUserCreated === 'error') {
-      console.log('error');
+      setIsOpenModal(false);
+      setIsLoading(false);
+      if (isCreateUserError?.response.data) {
+        useToastDialog(
+          ALERT_TYPE.DANGER,
+          'CREATE USER',
+          isCreateUserError?.response.data,
+        );
+        return;
+      }
+      useToastDialog(ALERT_TYPE.DANGER, 'CREATE USER', 'Failed to create User');
     }
   }, [isUserCreated]);
 
@@ -77,33 +119,72 @@ const Users = () => {
       refetchUsers();
       setIsOpenModal(false);
       setModalAction('');
-      useNotification('success', 'UPDATE USERS', 'User updated successfully');
+      useToastDialog(
+        ALERT_TYPE.SUCCESS,
+        'UPDATE USER',
+        'User updated successfully',
+      );
     } else if (isUpdateUser === 'error') {
-      console.log('error');
+      setIsOpenModal(false);
+      setIsLoading(false);
+      if (isUpdateUserError?.response.data) {
+        useToastDialog(
+          ALERT_TYPE.DANGER,
+          'UPDATE USER',
+          isUpdateUserError?.response.data,
+        );
+        return;
+      }
+      useToastDialog(
+        ALERT_TYPE.DANGER,
+        'UPDATE USER',
+        'Failed to update user!',
+      );
     }
   }, [isUpdateUser]);
 
   useEffect(() => {
     if (isUserResetPassword === 'success') {
       setIsOpenModal(false);
-      setModalAction('');
-      useNotification(
-        'success',
+      setIsLoading(false);
+      useToastDialog(
+        ALERT_TYPE.SUCCESS,
         'RESET PASSWORD',
         'Password reset successfully',
       );
     } else if (isUserResetPassword === 'error') {
-      console.log('error');
+      setIsOpenModal(false);
+      setIsLoading(false);
+      useToastDialog(
+        ALERT_TYPE.DANGER,
+        'RESET PASSWORD',
+        'Failed to reset password!',
+      );
     }
   }, [isUserResetPassword]);
 
   useEffect(() => {
-    if (modalAction === 'update') {
-      console.log(createUserRef.current);
-    }
-  }, [modalAction]);
+    setIsLoading(true);
+    const delayDebounce = setTimeout(() => {
+      if (filter) {
+        setUserList(
+          isUserData.filter(item =>
+            item.user_name.toLowerCase().includes(filter.toLowerCase()),
+          ),
+        );
+      } else {
+        setUserList(isUserData);
+      }
+      setIsLoading(false);
+    }, 300);
+
+    return () => {
+      clearTimeout(delayDebounce);
+    };
+  }, [filter, isUserData]);
 
   const handleActions = useCallback(() => {
+    setIsLoading(true);
     switch (modalAction) {
       case 'create':
         const newUser = {
@@ -116,17 +197,29 @@ const Users = () => {
         break;
       case 'update':
         const updateUserDetails = {
-          id: createUserRef.current.id,
-          userName: createUserRef.current.userName,
-          role: createUserRef.current.role,
-          contact: createUserRef.current.contact,
+          id: updateUserRef.current.id,
+          userName: updateUserRef.current.userName,
+          role: updateUserRef.current.role,
+          contact: updateUserRef.current.contact,
         };
         updateUser(updateUserDetails);
         break;
       case 'resetpassword':
+        if (
+          resetPasswordRef.current.newPassword !==
+          resetPasswordRef.current.confirmPassword
+        ) {
+          useToastDialog(
+            ALERT_TYPE.DANGER,
+            'RESET PASSWORD',
+            'Make sure to enter the same password in both fields',
+          );
+          setIsLoading(false);
+          setIsOpenModal(false);
+          return;
+        }
         const reset = {
           id: resetPasswordRef.current.id,
-          oldPassword: resetPasswordRef.current.oldPassword,
           newPassword: resetPasswordRef.current.newPassword,
         };
         resetPassword(reset);
@@ -149,35 +242,43 @@ const Users = () => {
         <UserHeaders
           setIsOpenModal={setIsOpenModal}
           setModalAction={setModalAction}
+          filter={filter}
+          setFilter={setFilter}
         />
         <Divider style={{ borderBottomWidth: 0.5, marginBottom: 5 }} />
-        <FlashList
-          data={isUserData}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => {
-            return (
-              <UserList
-                item={item}
-                toggleExpand={toggleExpand}
-                expandedId={expandedId}
-                theme={theme}
-                createUserRef={createUserRef.current}
-                setModalAction={setModalAction}
-                setIsOpenModal={setIsOpenModal}
-                resetPasswordRef={resetPasswordRef.current}
-              />
-            );
-          }}
-          extraData={expandedId}
-        />
+        <View style={{ flex: 1 }}>
+          {isLoading || isFetchingUsers ? (
+            <Loader type="skeleton" />
+          ) : (
+            <FlashList
+              data={userList}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({ item }) => (
+                <UserList
+                  item={item}
+                  toggleExpand={toggleExpand}
+                  expandedId={expandedId}
+                  theme={theme}
+                  setModalAction={setModalAction}
+                  setIsOpenModal={setIsOpenModal}
+                  resetPasswordRef={resetPasswordRef.current}
+                  updateUserRef={updateUserRef.current}
+                />
+              )}
+              extraData={expandedId}
+            />
+          )}
+        </View>
       </View>
       <UserModals
+        isLoading={isLoading}
         isOpenModal={isOpenModal}
         modalAction={modalAction}
         setIsOpenModal={setIsOpenModal}
-        createUserRef={createUserRef.current}
         handleActions={handleActions}
+        createUserRef={createUserRef.current}
         resetPasswordRef={resetPasswordRef.current}
+        updateUserRef={updateUserRef.current}
       />
     </>
   );

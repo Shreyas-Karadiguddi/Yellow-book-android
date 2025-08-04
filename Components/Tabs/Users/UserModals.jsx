@@ -1,9 +1,11 @@
 import React, { useCallback, memo } from 'react';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';
-import BaseModal from '../../../General/BaseModal';
-import CreateUpdateUser from './CreateUpdateUser';
-import ResetPassword from './ResetPassword';
+import BaseModal from '../../General/BaseModal';
+import { Loader } from '../../General/Loader';
+import CreateUser from './modals/CreateUser';
+import ResetPassword from './modals/ResetPassword';
+import UpdateUser from './modals/UpdateUser';
 
 const modalParams = {
   create: {
@@ -32,24 +34,34 @@ const modalParams = {
   },
 };
 
-const modalContent = (modalAction, createUserRef, resetPasswordRef) => {
+const modalContent = (
+  modalAction,
+  createUserRef,
+  resetPasswordRef,
+  updateUserRef,
+) => {
   switch (modalAction) {
     case 'create':
-    case 'update':
-      return <CreateUpdateUser createUserRef={createUserRef} />;
+      return <CreateUser createUserRef={createUserRef} />;
     case 'resetpassword':
       return <ResetPassword resetPasswordRef={resetPasswordRef} />;
+    case 'update':
+      return <UpdateUser updateUserRef={updateUserRef} />;
     default:
       return;
   }
 };
 
-const modalFooter = (modalAction, handleCancel, handleActions) => {
+const modalFooter = (modalAction, handleCancel, handleActions, isLoading) => {
   return (
     <View style={{ display: 'flex', flexDirection: 'row', gap: 5 }}>
       <Button
         mode="contained"
-        icon={modalParams[modalAction]?.footerButtonIcon1}
+        icon={
+          isLoading
+            ? () => <Loader type="ActivityIndicator" color="white" />
+            : modalParams[modalAction]?.footerButtonIcon1
+        }
         onPress={handleActions}
       >
         {modalParams[modalAction]?.footerButton1}
@@ -72,18 +84,34 @@ const UserModals = ({
   createUserRef,
   handleActions,
   resetPasswordRef,
+  isLoading,
+  updateUserRef,
 }) => {
   const handleCancel = () => {
     setIsOpenModal(false);
+    resetPasswordRef.confirmPassword = '';
+    resetPasswordRef.newPassword = '';
+    updateUserRef.userName = '';
+    updateUserRef.role = '';
+    updateUserRef.contact = '';
+    createUserRef.userName = '';
+    createUserRef.password = '';
+    createUserRef.role = '';
+    createUserRef.contact = '';
   };
 
   const cotent = useCallback(() => {
-    return modalContent(modalAction, createUserRef, resetPasswordRef);
+    return modalContent(
+      modalAction,
+      createUserRef,
+      resetPasswordRef,
+      updateUserRef,
+    );
   }, [modalAction]);
 
   const footer = useCallback(() => {
-    return modalFooter(modalAction, handleCancel, handleActions);
-  }, [modalAction]);
+    return modalFooter(modalAction, handleCancel, handleActions, isLoading);
+  }, [modalAction, isLoading]);
 
   return (
     <BaseModal
@@ -97,6 +125,7 @@ const UserModals = ({
   );
 };
 export default memo(UserModals, (prev, next) => {
+  if (prev.isLoading !== next.isLoading) return false;
   if (prev.isOpenModal !== next.isOpenModal) return false;
   if (prev.modalAction !== next.modalAction) return false;
   return true;

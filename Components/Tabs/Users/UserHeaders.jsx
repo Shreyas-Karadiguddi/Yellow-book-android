@@ -1,17 +1,28 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { memo } from 'react';
 import { Row, Col } from 'react-native-easy-grid';
-import { Button, Icon, TextInput } from 'react-native-paper';
+import { Button, Searchbar } from 'react-native-paper';
 
-const UserHeaders = ({ setIsOpenModal, setModalAction }) => {
+const UserHeaders = ({ setIsOpenModal, setModalAction, filter, setFilter }) => {
   return (
     <Row style={{ height: 60, alignItems: 'center' }}>
       <Col style={{ paddingHorizontal: 8, width: '70%' }}>
-        <TextInput
-          mode="contained"
+        <Searchbar
           placeholder="Search"
-          style={{ height: 40 }}
-          left={<TextInput.Icon icon="filter" size={20} />}
+          inputStyle={{
+            fontSize: 16,
+            padding: 0,
+            paddingBottom: 12,
+          }}
+          style={{
+            height: 45,
+            backgroundColor: '#eee6ff',
+            borderRadius: 25,
+          }}
+          contentStyle={{
+            height: 45,
+          }}
+          value={filter}
+          onChangeText={text => setFilter(text)}
         />
       </Col>
       <Col style={{ paddingHorizontal: 8 }}>
@@ -29,4 +40,6 @@ const UserHeaders = ({ setIsOpenModal, setModalAction }) => {
     </Row>
   );
 };
-export default UserHeaders;
+export default memo(UserHeaders, (prev, next) => {
+  return prev.filter === next.filter;
+});

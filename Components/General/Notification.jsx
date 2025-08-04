@@ -1,10 +1,27 @@
-import Toast from 'react-native-toast-message';
+import { ALERT_TYPE, Toast, Dialog } from 'react-native-alert-notification';
 
-export const useNotification = (type, text1, text2, visibilityTime = 3000) => {
-  return Toast.show({
+export const useToastMessage = (
+  type = ALERT_TYPE.SUCCESS,
+  title = 'success',
+  textBody = 'This is text body',
+) => {
+  Toast.show({
     type: type,
-    text1: text1,
-    text2: text2,
-    visibilityTime: visibilityTime,
+    title: title,
+    textBody: textBody,
+    autoClose: 2000,
+  });
+};
+
+export const useToastDialog = (
+  type = ALERT_TYPE.SUCCESS,
+  title = 'success',
+  textBody = 'This is text body',
+) => {
+  Dialog.show({
+    type: type,
+    title: title,
+    textBody: textBody,
+    button: 'Close',
   });
 };

@@ -8,10 +8,10 @@ const UserList = ({
   toggleExpand,
   expandedId,
   theme,
-  createUserRef,
   setModalAction,
   setIsOpenModal,
   resetPasswordRef,
+  updateUserRef,
 }) => {
   const isExpanded = expandedId === item.id;
 
@@ -58,16 +58,10 @@ const UserList = ({
             style={styles.actionButton}
             textColor="#000"
             onPress={() => {
-              createUserRef.id = item.id;
-              createUserRef.userName = item.user_name;
-              // createUserRef.role = item.role;
-              createUserRef.contact = item.contact_info;
-              // console.log(
-              //   'OKKKKKKKKKK',
-              //   item.id,
-              //   item.user_name,
-              //   createUserRef,
-              // );
+              updateUserRef.id = item.id;
+              updateUserRef.userName = item.user_name;
+              updateUserRef.role = item.role;
+              updateUserRef.contact = item.contact_info;
               setModalAction('update');
               setIsOpenModal(true);
             }}
@@ -80,11 +74,11 @@ const UserList = ({
   );
 };
 
-export default memo(
-  UserList,
-  (prev, next) =>
-    (prev.expandedId === prev.item.id) === (next.expandedId === next.item.id),
-);
+export default memo(UserList, (prev, next) => {
+  return (
+    (prev.expandedId === prev.item.id) === (next.expandedId === next.item.id)
+  );
+});
 
 const styles = StyleSheet.create({
   userCard: {
