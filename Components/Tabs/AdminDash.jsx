@@ -24,7 +24,7 @@ export default function AdminDash() {
   const isDark = useColorScheme() === 'dark';
 
   const [expandedId, setExpandedId] = useState(null);
-  const { data: users, isLoading } = userActions.getAllUsers();
+  const { data: users, isLoading } = userActions.useGetAllUsers();
 
   const toggleExpand = id => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

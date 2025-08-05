@@ -14,7 +14,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
 
-import Users from '../Tabs/Users';
+import Users from '../Tabs/Users/Users';
 import AdminDash from '../Tabs/AdminDash';
 import Settings from '../Tabs/Settings';
 import Customers from '../Tabs/Customers';
