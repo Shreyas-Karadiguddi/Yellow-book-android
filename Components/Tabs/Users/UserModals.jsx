@@ -14,7 +14,7 @@ const modalParams = {
     footerButton2: 'CANCEL',
     footerButtonIcon1: 'plus',
     footerButtonIcon2: 'close',
-    contentHeight: 280,
+    contentHeight: 265,
   },
   update: {
     title: 'UPDATE USER',
@@ -22,7 +22,7 @@ const modalParams = {
     footerButton2: 'CANCEL',
     footerButtonIcon1: 'content-save',
     footerButtonIcon2: 'close',
-    contentHeight: 280,
+    contentHeight: 199,
   },
   resetpassword: {
     title: 'RESET PASSWORD',
@@ -30,7 +30,7 @@ const modalParams = {
     footerButton2: 'CANCEL',
     footerButtonIcon1: 'lock-reset',
     footerButtonIcon2: 'close',
-    contentHeight: 200,
+    contentHeight: 130,
   },
 };
 

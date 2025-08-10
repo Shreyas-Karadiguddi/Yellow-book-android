@@ -17,7 +17,7 @@ const UpdateUser = ({ updateUserRef }) => {
   }, [role]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, gap: 6, marginTop: 8 }}>
       <Row>
         <Col>
           <TextInput

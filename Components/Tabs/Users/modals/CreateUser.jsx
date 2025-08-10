@@ -17,7 +17,7 @@ const CreateUser = ({ createUserRef }) => {
   }, [role]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, gap: 6, marginTop: 8 }}>
       <Row>
         <Col>
           <TextInput
@@ -25,7 +25,10 @@ const CreateUser = ({ createUserRef }) => {
             mode="outlined"
             defaultValue={createUserRef.userName}
             onChangeText={text => (createUserRef.userName = text)}
-            style={{ height: 50 }}
+            style={{
+              height: 50,
+              borderRadius: 50,
+            }}
             autoFocus
           />
         </Col>

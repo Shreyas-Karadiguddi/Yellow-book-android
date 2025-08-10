@@ -1,22 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   View,
   StyleSheet,
   Image,
-  TouchableOpacity,
   KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Dimensions,
-  ToastAndroid,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { TextInput, Button, Text, Card } from 'react-native-paper';
+import { TextInput, Button, Text } from 'react-native-paper';
 import * as authActions from '../../actions/auth_api';
 import * as Utils from '../../Utils/Auth';
+import { useToastDialog } from '../General/Notification';
+import { ALERT_TYPE } from 'react-native-alert-notification';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const INITIAL_USER_CREDENTIALS = {
   userName: '',
@@ -36,24 +34,22 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (loginStatus === 'success') {
-      handleLoginSuccess();
-    } else if (loginStatus === 'error' && loginData?.message) {
-      ToastAndroid.show(loginData.message, ToastAndroid.LONG);
+      useToastDialog(
+        ALERT_TYPE.SUCCESS,
+        'SUCCESS',
+        'User logged in successfully',
+      );
+      axios.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${loginData.token}`;
+      Utils.setToken(loginData.token);
+      const decodedToken = Utils.decodeToken(loginData.token);
+      dispatch({ type: 'SET_ROLE', payload: decodedToken.role });
+      dispatch({ type: 'TOKEN', payload: loginData.token });
     } else if (loginStatus === 'error') {
-      ToastAndroid.show('Login failed. Please try again.', ToastAndroid.LONG);
+      useToastDialog(ALERT_TYPE.DANGER, 'ERROR', 'Failed to login');
     }
-  }, [loginStatus, loginData, isLoginLoading]);
-
-  const handleLoginSuccess = () => {
-    axios.defaults.headers.common[
-      'Authorization'
-    ] = `Bearer ${loginData.token}`;
-    ToastAndroid.show(loginData.message, ToastAndroid.SHORT);
-    Utils.setToken(loginData.token);
-    const decodedToken = Utils.decodeToken(loginData.token);
-    dispatch({ type: 'SET_ROLE', payload: decodedToken.role });
-    dispatch({ type: 'TOKEN', payload: loginData.token });
-  };
+  }, [loginStatus, loginData]);
 
   const handleLogin = () => {
     loginUser({
@@ -63,59 +59,53 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.header}>
-          <View style={styles.iconWrapper}>
+    <KeyboardAvoidingView style={styles.container}>
+      <View style={styles.innerContainer}>
+        <View style={styles.logoWrapper}>
+          <View style={styles.logoCircle}>
             <Image
               source={require('../../assets/icons/yellow-book-app-icon.png')}
-              style={styles.icon}
+              style={styles.logo}
               resizeMode="contain"
             />
           </View>
         </View>
 
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text style={styles.loginTitle}>LOGIN</Text>
+        <Text style={styles.title}>Login</Text>
+        <Text style={styles.subtitle}>Get access to your account and more</Text>
 
-            <TextInput
-              label="Username"
-              defaultValue={userCredentials.current.userName}
-              onChangeText={text => (userCredentials.current.userName = text)}
-              mode="flat"
-              style={styles.input}
-              autoCapitalize="none"
-            />
+        <TextInput
+          label="User name"
+          mode="outlined"
+          style={styles.input}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          onChangeText={text => (userCredentials.current.userName = text)}
+          theme={{ roundness: 10 }}
+        />
 
-            <TextInput
-              label="Password"
-              defaultValue={userCredentials.current.password}
-              onChangeText={text => (userCredentials.current.password = text)}
-              mode="flat"
-              style={styles.input}
-              secureTextEntry
-            />
+        <TextInput
+          label="Password"
+          mode="outlined"
+          style={styles.input}
+          secureTextEntry
+          onChangeText={text => (userCredentials.current.password = text)}
+          theme={{ roundness: 10 }}
+        />
 
-            <Button
-              mode="contained"
-              onPress={handleLogin}
-              style={styles.button}
-              loading={isLoginLoading}
-              disabled={isLoginLoading}
-            >
-              LOGIN
-            </Button>
-
-            <TouchableOpacity>
-              <Text style={styles.forgotText}>FORGOT PASSWORD?</Text>
-            </TouchableOpacity>
-          </Card.Content>
-        </Card>
-      </ScrollView>
+        <Button
+          icon="login"
+          mode="contained"
+          onPress={handleLogin}
+          style={styles.signInButton}
+          contentStyle={{ paddingVertical: 8 }}
+          labelStyle={{ fontSize: 16, fontWeight: '600' }}
+          loading={isLoginLoading}
+          disabled={isLoginLoading}
+        >
+          Login
+        </Button>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -125,56 +115,48 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2962FF',
-  },
-  scrollView: {
-    flexGrow: 1,
+    backgroundColor: '#eee6ff',
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 20,
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: -30,
-  },
-  iconWrapper: {
-    backgroundColor: 'white',
-    padding: width * 0.05,
-    borderRadius: 100,
-    marginBottom: 50,
-  },
-  icon: {
-    width: width * 0.1,
-    height: width * 0.1,
-    tintColor: '#2962FF',
-  },
-  card: {
+  innerContainer: {
     width: width * 0.85,
-    borderRadius: 16,
-    elevation: 6,
-    paddingVertical: height * 0.02,
+    alignSelf: 'center',
   },
-  loginTitle: {
+  logoWrapper: {
+    alignItems: 'center',
+    marginBottom: 25,
+  },
+  logoCircle: {
+    backgroundColor: '#EAF1FF',
+    padding: 20,
+    borderRadius: 100,
+    elevation: 2,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+  },
+  title: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#2962FF',
+    marginBottom: 6,
+    color: '#111827',
+  },
+  subtitle: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 22,
   },
   input: {
-    marginBottom: 12,
-    backgroundColor: 'transparent',
+    marginBottom: 14,
+    backgroundColor: '#fff',
+    elevation: 1,
   },
-  button: {
-    marginTop: 8,
-    borderRadius: 30,
-    paddingVertical: 6,
+  signInButton: {
+    marginTop: 10,
     backgroundColor: '#2962FF',
-  },
-  forgotText: {
-    marginTop: 12,
-    textAlign: 'center',
-    color: '#2962FF',
-    fontWeight: '600',
+    borderRadius: 10,
   },
 });

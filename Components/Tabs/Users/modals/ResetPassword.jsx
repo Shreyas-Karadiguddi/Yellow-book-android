@@ -5,7 +5,7 @@ import { Col, Row } from 'react-native-easy-grid';
 
 const ResetPassword = ({ resetPasswordRef }) => {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, gap: 6, marginTop: 8 }}>
       <Row>
         <Col>
           <TextInput

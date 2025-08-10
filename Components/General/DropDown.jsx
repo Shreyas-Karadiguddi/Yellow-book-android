@@ -7,6 +7,7 @@ export const GeneralDropDown = ({
   value,
   setValue,
   placeholder = '',
+  height = 300,
 }) => {
   return (
     <Dropdown
@@ -14,7 +15,7 @@ export const GeneralDropDown = ({
       placeholderStyle={styles.placeholderStyle}
       selectedTextStyle={styles.selectedTextStyle}
       data={data}
-      maxHeight={300}
+      maxHeight={height}
       labelField="label"
       valueField="value"
       placeholder={placeholder}

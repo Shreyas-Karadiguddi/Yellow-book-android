@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
-import { Card, Text, Button } from 'react-native-paper';
-import { View, StyleSheet } from 'react-native';
-import Icon from '@react-native-vector-icons/material-design-icons';
+import { Card, Text } from 'react-native-paper';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const UserList = ({
   item,
@@ -38,25 +38,22 @@ const UserList = ({
       </View>
 
       {isExpanded && (
-        <View style={styles.buttonRow}>
-          <Button
-            mode="contained"
-            icon="reload"
-            style={styles.actionButton}
-            textColor="#000"
+        <View style={styles.iconRow}>
+          <TouchableOpacity
+            style={styles.actionContainer}
             onPress={() => {
               resetPasswordRef.id = item.id;
               setModalAction('resetpassword');
               setIsOpenModal(true);
             }}
           >
-            Reset Password
-          </Button>
-          <Button
-            mode="contained"
-            icon="account-edit"
-            style={styles.actionButton}
-            textColor="#000"
+            <View style={[styles.actionIcon, { backgroundColor: '#F0F0F0' }]}>
+              <Icon name="lock-reset" size={26} color="#FF9800" />
+            </View>
+            <Text style={styles.actionLabel}>Reset Password</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionContainer}
             onPress={() => {
               updateUserRef.id = item.id;
               updateUserRef.userName = item.user_name;
@@ -66,8 +63,11 @@ const UserList = ({
               setIsOpenModal(true);
             }}
           >
-            Update User
-          </Button>
+            <View style={[styles.actionIcon, { backgroundColor: '#F0F0F0' }]}>
+              <Icon name="account-edit" size={26} color="#4CAF50" />
+            </View>
+            <Text style={styles.actionLabel}>Update</Text>
+          </TouchableOpacity>
         </View>
       )}
     </Card>
@@ -105,15 +105,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
   },
-  buttonRow: {
+  iconRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 16,
-    gap: 10,
+    justifyContent: 'space-around',
+    marginTop: 12,
   },
-  actionButton: {
+  actionContainer: {
+    alignItems: 'center',
     flex: 1,
-    borderRadius: 20,
-    backgroundColor: '#C4B5FD',
+  },
+  actionIcon: {
+    padding: 8,
+    borderRadius: 50,
+    marginBottom: 4,
+  },
+  actionLabel: {
+    fontSize: 12,
+    color: '#555',
+    fontWeight: 'bold',
   },
 });

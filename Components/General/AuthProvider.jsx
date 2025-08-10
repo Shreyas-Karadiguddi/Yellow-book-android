@@ -15,9 +15,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
 
 import Users from '../Tabs/Users/Users';
-import AdminDash from '../Tabs/AdminDash';
+import AdminDashboard from '../Tabs/Admin/AdminDashboard';
 import Settings from '../Tabs/Settings';
-import Customers from '../Tabs/Customers';
+import Customers from '../Tabs/Customers/Customers';
 import LoginScreen from '../Login/Login';
 
 const Tabs = createBottomTabNavigator();
@@ -73,10 +73,13 @@ const protectRoutes = role => {
             },
             tabBarActiveTintColor: '#C4B5FD',
             tabBarInactiveTintColor: 'gray',
-            // headerShown: false,
           })}
         >
-          <Tabs.Screen name="Admin Dashboard" component={AdminDash} />
+          <Tabs.Screen
+            name="Admin Dashboard"
+            component={AdminDashboard}
+            options={{ headerShown: false }}
+          />
           <Tabs.Screen name="User master" component={Users} />
           <Tabs.Screen name="Customer master" component={Customers} />
           <Tabs.Screen name="Settings" component={Settings} />

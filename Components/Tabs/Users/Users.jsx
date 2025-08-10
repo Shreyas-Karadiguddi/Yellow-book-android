@@ -11,7 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Divider, useTheme } from 'react-native-paper';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 import * as userActions from '../../../actions/users_api';
-import UserHeaders from './UserHeaders';
+import UserHeader from './UserHeader';
 import UserList from './UserList';
 import UserModals from './UserModals';
 import { useToastDialog } from '../../General/Notification';
@@ -79,7 +79,6 @@ const Users = () => {
   useFocusEffect(
     useCallback(() => {
       refetchUsers();
-      return () => {};
     }, []),
   );
 
@@ -239,13 +238,15 @@ const Users = () => {
       <View
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <UserHeaders
+        <UserHeader
           setIsOpenModal={setIsOpenModal}
           setModalAction={setModalAction}
           filter={filter}
           setFilter={setFilter}
         />
-        <Divider style={{ borderBottomWidth: 0.5, marginBottom: 5 }} />
+        <View style={styles.dividerWrapper}>
+          <Divider />
+        </View>
         <View style={{ flex: 1 }}>
           {isLoading || isFetchingUsers ? (
             <Loader type="skeleton" />
@@ -289,5 +290,15 @@ export default Users;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  dividerWrapper: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 3,
+    marginVertical: 12,
+    borderRadius: 1,
+    overflow: 'hidden',
   },
 });

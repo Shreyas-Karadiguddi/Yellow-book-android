@@ -38,3 +38,15 @@ export const resetPasswordByAdmin = () => {
         .then(res => res.data),
   });
 };
+
+export const useGetUserInfo = userId => {
+  return useQuery({
+    queryKey: ['GetUserInfo'],
+    queryFn: () =>
+      axios
+        .get(`${API_URL}/users/getuserinfo/${userId}`)
+        .then(response => response.data),
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+};
