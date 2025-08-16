@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { Card, Text } from 'react-native-paper';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Colors } from '../../General/Colors';
 
 const UserList = ({
   item,
@@ -25,7 +26,7 @@ const UserList = ({
     >
       <View style={styles.userRow}>
         <View style={styles.iconWrapper}>
-          <Icon name="account-circle" size={24} color="#2962FF" />
+          <Icon name="account-circle" size={24} color={Colors.blue.dark} />
         </View>
         <Text style={[styles.userName, { color: theme.colors.primary }]}>
           {item.user_name}
@@ -48,7 +49,7 @@ const UserList = ({
             }}
           >
             <View style={[styles.actionIcon, { backgroundColor: '#F0F0F0' }]}>
-              <Icon name="lock-reset" size={26} color="#FF9800" />
+              <Icon name="lock-reset" size={26} color={Colors.orange.dark}/>
             </View>
             <Text style={styles.actionLabel}>Reset Password</Text>
           </TouchableOpacity>
@@ -64,7 +65,7 @@ const UserList = ({
             }}
           >
             <View style={[styles.actionIcon, { backgroundColor: '#F0F0F0' }]}>
-              <Icon name="account-edit" size={26} color="#4CAF50" />
+              <Icon name="account-edit" size={26} color={Colors.green.dark} />
             </View>
             <Text style={styles.actionLabel}>Update</Text>
           </TouchableOpacity>

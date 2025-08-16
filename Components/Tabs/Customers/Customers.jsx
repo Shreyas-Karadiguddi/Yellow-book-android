@@ -296,12 +296,10 @@ const Customers = () => {
             <Loader type="skeleton" />
           ) : (
             <FlashList
-              initialScrollIndex={0}
+              // initialScrollIndex={0}
               data={customerList}
               keyExtractor={item => item.id.toString()}
-              // maintainVisibleContentPosition={{
-              //   disabled: true,
-              // }}
+              maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
               estimatedItemSize={80}
               disableAutoLayout={false}
               removeClippedSubviews={false}

@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { Row, Col } from 'react-native-easy-grid';
 import { Button, Searchbar } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
+import { Colors } from '../../General/Colors';
 
 const CustomerHeader = ({
   setIsOpenModal,
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     height: 45,
-    backgroundColor: '#eee6ff',
+    backgroundColor: Colors.purple.medium,
     borderRadius: 25,
   },
   searchContent: {

@@ -44,7 +44,7 @@ const FeedBackModal = ({ isOpenModal, setIsOpenModal }) => {
         >
           Submit
         </Button>
-        <Button mode="outlined" onPress={() => setIsOpenModal(false)}>
+        <Button mode="outlined" onPress={() => setIsOpenModal(false)} icon='close'>
           Cancel
         </Button>
       </View>

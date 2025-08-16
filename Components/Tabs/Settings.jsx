@@ -17,32 +17,6 @@ export default function SettingsScreen() {
       style={styles.container}
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View style={[styles.card, styles.profileCard]}>
-        <View style={styles.profileHeader}>
-          <Ionicons name="person-circle-outline" size={60} color="#FF8C42" />
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Jabbar Patel</Text>
-            <Text style={styles.profileRole}>Software Developer</Text>
-          </View>
-        </View>
-        <View style={styles.statsRow}>
-          <View style={styles.statsBox}>
-            <Ionicons name="checkmark-circle-outline" size={20} color="#4CAF50" />
-            <Text style={styles.statsNumber}>1</Text>
-            <Text style={styles.statsLabel}>Closed</Text>
-          </View>
-          <View style={styles.statsBox}>
-            <Ionicons name="briefcase-outline" size={20} color="#2196F3" />
-            <Text style={styles.statsNumber}>2</Text>
-            <Text style={styles.statsLabel}>Assigned</Text>
-          </View>
-          <View style={styles.statsBox}>
-            <Ionicons name="time-outline" size={20} color="#FF9800" />
-            <Text style={styles.statsNumber}>3</Text>
-            <Text style={styles.statsLabel}>Pending</Text>
-          </View>
-        </View>
-      </View>
       <View style={styles.grid}>
         {items.map((item, index) => (
           <TouchableOpacity key={index} style={styles.actionCard}>
@@ -60,56 +34,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFF8FA',
     padding: 12,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6, 
-  },
-  profileCard: {
-    flexDirection: 'column',
-  },
-  profileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  profileInfo: {
-    marginLeft: 12,
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  profileRole: {
-    fontSize: 14,
-    color: '#999',
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-  statsBox: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statsNumber: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 4,
-  },
-  statsLabel: {
-    fontSize: 12,
-    color: '#999',
   },
   grid: {
     flexDirection: 'row',

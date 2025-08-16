@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { StyleSheet } from 'react-native';
 import { Row, Col } from 'react-native-easy-grid';
 import { Button, Searchbar } from 'react-native-paper';
+import { Colors } from '../../General/Colors';
 
 const UserHeader = ({ setIsOpenModal, setModalAction, filter, setFilter }) => {
   return (
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   },
   searchbar: {
     height: 45,
-    backgroundColor: '#eee6ff',
+    backgroundColor: Colors.purple.medium,
     borderRadius: 25,
   },
   searchContent: {

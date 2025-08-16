@@ -8,11 +8,13 @@ import {
   Dimensions,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { ALERT_TYPE } from 'react-native-alert-notification';
 import { TextInput, Button, Text } from 'react-native-paper';
 import * as authActions from '../../actions/auth_api';
 import * as Utils from '../../Utils/Auth';
 import { useToastDialog } from '../General/Notification';
-import { ALERT_TYPE } from 'react-native-alert-notification';
+import { Colors } from '../General/Colors';
+
 
 const { width } = Dimensions.get('window');
 
@@ -115,7 +117,7 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee6ff',
+    backgroundColor: Colors.bluishGray.light,
     justifyContent: 'center',
   },
   innerContainer: {
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   logoCircle: {
-    backgroundColor: '#EAF1FF',
+    backgroundColor: Colors.bluishGray.medium,
     padding: 20,
     borderRadius: 100,
     elevation: 2,
