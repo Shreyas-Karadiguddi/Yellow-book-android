@@ -6,6 +6,7 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import { FlashList } from '@shopify/flash-list';
 import { useFocusEffect } from '@react-navigation/native';
 import { Divider, useTheme } from 'react-native-paper';
@@ -43,6 +44,7 @@ const RESET_PASSWORD = {
 };
 
 const Users = () => {
+  const apiUrl = useSelector(state => state.reducer.apiUrl);
   const theme = useTheme();
   const [expandedId, setExpandedId] = useState(null);
   const [isOpenModal, setIsOpenModal] = useState(false);

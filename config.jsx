@@ -1,4 +1,5 @@
-import { PORT, DEVHOST } from '@env'
+import { PORT, DEVHOST } from '@env';
 
-const IS_DEV = __DEV__
-export const API_URL = IS_DEV ? `http://${DEVHOST}:${PORT}/api` : 'Production'
+export const API_URL = __DEV__
+  ? `http://${DEVHOST}:${PORT}/api`
+  : global.API_URL;

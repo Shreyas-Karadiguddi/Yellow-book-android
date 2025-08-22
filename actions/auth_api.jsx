@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useQuery, useMutation } from 'react-query';
+import { useMutation } from 'react-query';
 import { API_URL } from '../config';
 
 export const useLoginUser = () => {

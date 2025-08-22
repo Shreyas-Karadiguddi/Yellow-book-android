@@ -30,7 +30,7 @@
     "react-native-easy-grid": "^0.2.2",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "^2.27.1",
-    "react-native-linear-gradient": "^2.8.3",
+    "react-native-linear-gradient": "2.8.0",
     "react-native-make": "^1.0.1",
     "react-native-paper": "^5.14.5",
     "react-native-reanimated": "^3.18.0",

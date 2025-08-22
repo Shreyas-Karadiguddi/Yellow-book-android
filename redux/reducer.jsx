@@ -3,6 +3,7 @@ import * as actions from './actions';
 const INITIAL_VALUES = {
   token: null,
   role: null,
+  apiUrl: 'http://192.0.0.0:8085/api',
 };
 
 const globalStates = (state = INITIAL_VALUES, action) => {
@@ -16,6 +17,11 @@ const globalStates = (state = INITIAL_VALUES, action) => {
       return {
         ...state,
         role: action.payload,
+      };
+    case actions.API_URL:
+      return {
+        ...state,
+        apiUrl: action.payload,
       };
     default:
       return state;
