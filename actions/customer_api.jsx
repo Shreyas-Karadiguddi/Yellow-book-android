@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useMutation, useQuery } from 'react-query';
 import { API_URL } from '../config';
+import { API } from '../App';
 
 export const useGetCustomers = (page, pageSize, filter) => {
   return useQuery({
@@ -8,7 +9,7 @@ export const useGetCustomers = (page, pageSize, filter) => {
     queryFn: () =>
       axios
         .get(
-          `${API_URL}/customers/getcustomers/${page}/${pageSize}${
+          `${API.URL}/customers/getcustomers/${page}/${pageSize}${
             filter ? '/' + filter : ''
           }`,
         )
@@ -23,7 +24,7 @@ export const useCreateCustomer = () => {
     mutationKey: 'createCustomer',
     mutationFn: createCustomer =>
       axios
-        .post(`${API_URL}/customers/createcustomer`, createCustomer)
+        .post(`${API.URL}/customers/createcustomer`, createCustomer)
         .then(res => res.data),
   });
 };
@@ -33,7 +34,7 @@ export const useUpdateCustomer = () => {
     mutationKey: 'updateCustomer',
     mutationFn: updateCustomer =>
       axios
-        .post(`${API_URL}/customers/updatecustomer`, updateCustomer)
+        .post(`${API.URL}/customers/updatecustomer`, updateCustomer)
         .then(res => res.data),
   });
 };
@@ -43,7 +44,7 @@ export const useDeleteCustomer = () => {
     mutationKey: 'deleteCustomer',
     mutationFn: customerId =>
       axios
-        .delete(`${API_URL}/customers/deletecustomer/${customerId}`)
+        .delete(`${API.URL}/customers/deletecustomer/${customerId}`)
         .then(res => res),
   });
 };
@@ -53,7 +54,7 @@ export const useAssignCustomer = () => {
     mutationKey: 'assignCustomer',
     mutationFn: assignCustomer =>
       axios
-        .post(`${API_URL}/customers/assigncustomer`, assignCustomer)
+        .post(`${API.URL}/customers/assigncustomer`, assignCustomer)
         .then(res => res.data),
   });
 };

@@ -14,6 +14,8 @@ import * as authActions from '../../actions/auth_api';
 import * as Utils from '../../Utils/Auth';
 import { useToastDialog, useToastMessage } from '../General/Notification';
 import { Colors } from '../General/Colors';
+import { API_URL } from '../../redux/actions';
+import { API } from '../../App';
 
 const { width } = Dimensions.get('window');
 
@@ -24,8 +26,8 @@ const INITIAL_USER_CREDENTIALS = {
 
 const LoginScreen = () => {
   const userCredentials = useRef(INITIAL_USER_CREDENTIALS);
+  const apiUrl = useRef(API.URL)
   const dispatch = useDispatch();
-  const [url, setUrl] = useState('http://192.0.0.0:8085/api');
 
   const {
     mutate: loginUser,
@@ -80,17 +82,17 @@ const LoginScreen = () => {
           </Text>
           <TextInput
             label="API URL"
-            value={url}
-            onChangeText={setUrl}
+            defaultValue={apiUrl.current}
+            onChangeText={(text) => apiUrl.current = text}
             style={styles.input}
             right={
               <TextInput.Icon
                 icon="content-save"
                 onPress={() => {
-                  global.API_URL = url;
+                  dispatch({ type: API_URL, payload: apiUrl.current })
                   useToastMessage(
                     ALERT_TYPE.SUCCESS,
-                    'API URL ',
+                    'API URL',
                     'API URL set successfully',
                   );
                 }}
