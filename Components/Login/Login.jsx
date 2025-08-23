@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import {
   View,
@@ -15,7 +15,6 @@ import * as Utils from '../../Utils/Auth';
 import { useToastDialog } from '../General/Notification';
 import { Colors } from '../General/Colors';
 
-
 const { width } = Dimensions.get('window');
 
 const INITIAL_USER_CREDENTIALS = {
@@ -26,6 +25,7 @@ const INITIAL_USER_CREDENTIALS = {
 const LoginScreen = () => {
   const userCredentials = useRef(INITIAL_USER_CREDENTIALS);
   const dispatch = useDispatch();
+  const [url, setUrl] = useState('http://192.0.0.0:8085/api');
 
   const {
     mutate: loginUser,
@@ -61,54 +61,70 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container}>
-      <View style={styles.innerContainer}>
-        <View style={styles.logoWrapper}>
-          <View style={styles.logoCircle}>
-            <Image
-              source={require('../../assets/icons/yellow-book-app-icon.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
+    <>
+      <KeyboardAvoidingView style={styles.container}>
+        <View style={styles.innerContainer}>
+          <View style={styles.logoWrapper}>
+            <View style={styles.logoCircle}>
+              <Image
+                source={require('../../assets/icons/yellow-book-app-icon.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+            </View>
           </View>
+
+          <Text style={styles.title}>Login</Text>
+          <Text style={styles.subtitle}>
+            Get access to your account and more
+          </Text>
+          <TextInput
+            label="API URL"
+            value={url}
+            onChangeText={setUrl}
+            style={styles.input}
+            right={
+              <TextInput.Icon
+                icon="content-save"
+                onPress={() => (global.API_URL = url)}
+              />
+            }
+          />
+
+          <TextInput
+            label="User name"
+            mode="outlined"
+            style={styles.input}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            onChangeText={text => (userCredentials.current.userName = text)}
+            theme={{ roundness: 10 }}
+          />
+
+          <TextInput
+            label="Password"
+            mode="outlined"
+            style={styles.input}
+            secureTextEntry
+            onChangeText={text => (userCredentials.current.password = text)}
+            theme={{ roundness: 10 }}
+          />
+
+          <Button
+            icon="login"
+            mode="contained"
+            onPress={handleLogin}
+            style={styles.signInButton}
+            contentStyle={{ paddingVertical: 8 }}
+            labelStyle={{ fontSize: 16, fontWeight: '600' }}
+            loading={isLoginLoading}
+            disabled={isLoginLoading}
+          >
+            Login
+          </Button>
         </View>
-
-        <Text style={styles.title}>Login</Text>
-        <Text style={styles.subtitle}>Get access to your account and more</Text>
-
-        <TextInput
-          label="User name"
-          mode="outlined"
-          style={styles.input}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          onChangeText={text => (userCredentials.current.userName = text)}
-          theme={{ roundness: 10 }}
-        />
-
-        <TextInput
-          label="Password"
-          mode="outlined"
-          style={styles.input}
-          secureTextEntry
-          onChangeText={text => (userCredentials.current.password = text)}
-          theme={{ roundness: 10 }}
-        />
-
-        <Button
-          icon="login"
-          mode="contained"
-          onPress={handleLogin}
-          style={styles.signInButton}
-          contentStyle={{ paddingVertical: 8 }}
-          labelStyle={{ fontSize: 16, fontWeight: '600' }}
-          loading={isLoginLoading}
-          disabled={isLoginLoading}
-        >
-          Login
-        </Button>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 
