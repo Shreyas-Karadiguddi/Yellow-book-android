@@ -18,9 +18,7 @@ export default function App() {
 
   useEffect(() => {
     if (apiUrl) {
-
-      API.URL = __DEV__ ? `http://${DEVHOST}:${PORT}/api` : apiUrl
-      console.log("DEV", __DEV__, apiUrl, API.URL)
+      API.URL = apiUrl
     }
   }, [apiUrl])
 

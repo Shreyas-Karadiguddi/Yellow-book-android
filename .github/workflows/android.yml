@@ -44,3 +44,4 @@ jobs:
         with:
           name: app-${{ github.run_number }}.apk
           path: android/app/build/outputs/apk/release/app-release.${{ github.run_number }}.apk
+          compression-level: 0
