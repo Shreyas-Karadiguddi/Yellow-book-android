@@ -12,7 +12,7 @@ import { ALERT_TYPE } from 'react-native-alert-notification';
 import { TextInput, Button, Text } from 'react-native-paper';
 import * as authActions from '../../actions/auth_api';
 import * as Utils from '../../Utils/Auth';
-import { useToastDialog } from '../General/Notification';
+import { useToastDialog, useToastMessage } from '../General/Notification';
 import { Colors } from '../General/Colors';
 
 const { width } = Dimensions.get('window');
@@ -86,7 +86,14 @@ const LoginScreen = () => {
             right={
               <TextInput.Icon
                 icon="content-save"
-                onPress={() => (global.API_URL = url)}
+                onPress={() => {
+                  global.API_URL = url;
+                  useToastMessage(
+                    ALERT_TYPE.SUCCESS,
+                    'API URL ',
+                    'API URL set successfully',
+                  );
+                }}
               />
             }
           />
